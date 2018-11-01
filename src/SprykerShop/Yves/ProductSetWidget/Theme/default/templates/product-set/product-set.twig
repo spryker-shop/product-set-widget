@@ -74,6 +74,7 @@
                                 url: product.url,
                                 imageUrl: product.images.0.externalUrlSmall | default,
                                 price: product.price,
+                                product: product,
                                 originalPrice: product.prices['ORIGINAL'] | default
                             },
                             embed: {
