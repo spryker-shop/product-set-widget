@@ -29,17 +29,11 @@ class ProductSetWidgetPlugin extends AbstractWidgetPlugin implements ProductSetW
             ->addParameter('productViews', $productViewTransfers);
     }
 
-    /**
-     * @return string
-     */
     public static function getName(): string
     {
         return static::NAME;
     }
 
-    /**
-     * @return string
-     */
     public static function getTemplate(): string
     {
         return '@ProductSetWidget/views/product-set-widget/product-set-widget.twig';
