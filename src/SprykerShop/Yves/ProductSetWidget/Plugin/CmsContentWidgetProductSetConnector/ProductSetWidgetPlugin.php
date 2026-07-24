@@ -17,10 +17,9 @@ use SprykerShop\Yves\CmsContentWidgetProductSetConnector\Dependency\Plugin\Produ
 class ProductSetWidgetPlugin extends AbstractWidgetPlugin implements ProductSetWidgetPluginInterface
 {
     /**
-     * @param \Generated\Shared\Transfer\ProductSetDataStorageTransfer $productSetDataStorageTransfer
-     * @param array<\Generated\Shared\Transfer\ProductViewTransfer> $productViewTransfers
+     * {@inheritDoc}
      *
-     * @return void
+     * @param array<\Generated\Shared\Transfer\ProductViewTransfer> $productViewTransfers
      */
     public function initialize(ProductSetDataStorageTransfer $productSetDataStorageTransfer, array $productViewTransfers): void
     {
@@ -29,11 +28,21 @@ class ProductSetWidgetPlugin extends AbstractWidgetPlugin implements ProductSetW
             ->addParameter('productViews', $productViewTransfers);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public static function getName(): string
     {
         return static::NAME;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public static function getTemplate(): string
     {
         return '@ProductSetWidget/views/product-set-widget/product-set-widget.twig';
