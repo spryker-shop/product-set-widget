@@ -5,8 +5,6 @@ export default class ProductSetDetails extends Component {
     protected productItems: ProductItem[];
     protected targets: HTMLInputElement[];
 
-    protected readyCallback(): void {}
-
     protected init(): void {
         this.productItems = <ProductItem[]>Array.from(this.getElementsByClassName(`${this.jsName}__product-item`));
         this.targets = <HTMLInputElement[]>(
