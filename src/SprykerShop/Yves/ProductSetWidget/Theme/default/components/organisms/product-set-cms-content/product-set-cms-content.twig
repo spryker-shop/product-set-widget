@@ -27,11 +27,36 @@
             } only %}
                 {% block embeddedData %}
                     {% set isDisabled = false %}
+                    {# The products the button adds, as the traceable events report them: the tracking details of each, one piece, the price in cents. #}
+                    {% set trackingProducts = [] %}
+                    {% set isUserActionTrackingEnabled = findWidget('TraceableEventWidget').parameters.isUserActionTrackingEnabled ?? false %}
 
                     {% for product in data.data.products %}
                         {% if product.idProductConcrete is not empty and product.available %}
                             <input type="hidden" name="items[{{ loop.index }}][sku]" class="{{ data.config.jsName }}__product-sku-hidden-input" value="{{ product.sku }}">
                             <input type="hidden" name="items[{{ loop.index }}][quantity]" value="1">
+
+                            {% if isUserActionTrackingEnabled %}
+                                {% set trackingCategories = [] %}
+                                {% for categoryName in product.categoryPath | default([]) %}
+                                    {% set trackingCategories = trackingCategories | merge([{ name: categoryName }]) %}
+                                {% endfor %}
+                                {% set trackingDetails %}{% include model('tracking-details') ignore missing with { product: {
+                                    sku: product.sku,
+                                    abstractSku: product.abstractSku | default(null),
+                                    name: product.name,
+                                    abstractName: product.abstractName | default(null),
+                                    brand: product.brand | default(null),
+                                    variant: product.selectedVariantAttributes | default([]) | reduce((values, value) => values | merge([value]), []),
+                                    categories: trackingCategories,
+                                    price: product.prices.DEFAULT | default(null),
+                                    quantity: 1,
+                                } } only %}{% endset %}
+
+                                {% if trackingDetails is not empty %}
+                                    {% set trackingProducts = trackingProducts | merge([trackingDetails]) %}
+                                {% endif %}
+                            {% endif %}
                         {% endif %}
 
                         {% if product.idProductConcrete is empty %}
@@ -40,7 +65,7 @@
                     {% endfor %}
 
                     {% if (data.data.products | length) %}
-                        <button class="button {{ data.data.buttonClass }} {{ embed.productSetAddToCartButtonClass }}" {{ isDisabled ? 'disabled' : 'data-init-single-click' }}>
+                        <button class="button {{ data.data.buttonClass }} {{ embed.productSetAddToCartButtonClass }}" {{ isDisabled ? 'disabled' : 'data-init-single-click' }}{% if trackingProducts is not empty %} tracking-products="[{% for trackingDetails in trackingProducts %}{{ trackingDetails }}{{ loop.last ? '' : ',' }}{% endfor %}]"{% endif %}>
                             {{ 'product.set.detail.add-all-to-cart' | trans }}
                         </button>
                     {% endif %}
